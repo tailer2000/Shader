@@ -1,0 +1,21 @@
+프로젝션 매트릭스 ->?
+
+◎Vertex Transform
+(Vertex 입력 -> Vertex 출력) 연산이 Vertex 단위.
+1개 Vertex -> 1개 Vertex
+4개 -> 4개...
+
+◎ Primitive Assembly
+
+◎ Fragments(OpenGL), Pixel Shader(DX) -> Rasterization and Interpolation
+Rasterization : ?
+Interpolation : 보간
+
+◎ Fragment Operation
+생략
+◎ Frame Buffer
+
+
+Programmable Graphics Pipeline ★★★★★★~!!!
+
+
