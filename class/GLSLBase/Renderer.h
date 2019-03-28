@@ -21,6 +21,11 @@ public:
 	GLuint CreateBmpTexture(char * filePath);
 	   
 	void Test();
+	void Lecture2();
+	void Lecture3();
+	void Lecture4();
+	void Lecture5();
+	void RandomRect(int count);
 
 private:
 	void Initialize(int windowSizeX, int windowSizeY);
@@ -29,13 +34,25 @@ private:
 	GLuint CompileShaders(char* filenameVS, char* filenameFS);
 	void CreateVertexBufferObjects(); 
 	unsigned char * Renderer::loadBMPRaw(const char * imagepath, unsigned int& outWidth, unsigned int& outHeight);
+	void CreateProxyGeometry();
 
 	bool m_Initialized = false;
 	
 	unsigned int m_WindowSizeX = 0;
 	unsigned int m_WindowSizeY = 0;
+	
+	int GridCount = 0;
+	int m_count = 0;
 
 	GLuint m_VBORect = 0;
+	GLuint m_VBOTri = 0;
+	GLuint m_VBORandRect = 0;
+	GLuint m_VBO_GridMesh = 0;
+	GLuint m_VBORectColor = 0;
+
+	unsigned int vertex_count_array;
+
 	GLuint m_SolidRectShader = 0;
+	GLuint m_SimpleVelShader = 0;
 };
 
