@@ -7,7 +7,7 @@ in vec2 a_StartLife;
 const vec3 c_Gravity = vec3(0, -5, 0);
 
 uniform float u_Time;
-uniform bool u_Repeat = false;
+uniform bool u_Repeat = true;
 
 void main()
 {
@@ -19,7 +19,6 @@ void main()
 
 	if(newTime > 0)
 	{
-		//newPos += a_Vel* newTime + 0.5 * c_Gravity * newTime * newTime;
 		float life = newTime;
 		float remainingLife = lifeTime - life;
 		

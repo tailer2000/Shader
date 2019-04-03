@@ -27,7 +27,8 @@ void Renderer::Initialize(int windowSizeX, int windowSizeY)
 
 	//Load shaders
 	//m_SolidRectShader = CompileShaders("./Shaders/SolidRect.vs", "./Shaders/SolidRect.fs");
-	m_SimpleVelShader = CompileShaders("./Shaders/SimpleVel.vs", "./Shaders/SimpleVel.fs");
+	//m_SimpleVelShader = CompileShaders("./Shaders/SimpleVel.vs", "./Shaders/SimpleVel.fs");
+	m_SimpleVelShader2 = CompileShaders("./Shaders/SimpleVel2.vs", "./Shaders/SimpleVel2.fs");
 	
 	//Create VBOs
 	CreateVertexBufferObjects();
@@ -81,7 +82,9 @@ void Renderer::CreateVertexBufferObjects()
 	glBindBuffer(GL_ARRAY_BUFFER, m_VBOTri);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(tri), tri, GL_STATIC_DRAW);
 
-	RandomRect(1000);
+	//RandomRect(300);
+
+	MakeRect(300);
 }
 
 void Renderer::AddShader(GLuint ShaderProgram, const char* pShaderText, GLenum ShaderType)
@@ -442,6 +445,111 @@ void Renderer::RandomRect(int count)
 	vertex_count_array = count * verticesPerQuad;
 }
 
+void Renderer::MakeRect(int count)
+{
+	m_count = count;
+	float rectSize = 0.01f;
+	int verticesPerQuad = 6;
+	int floatsPerVertex = 3 + 3 + 2 + 2;
+	int size = count * verticesPerQuad * floatsPerVertex;
+	float *point = new float[size];
+
+	for (int i = 0; i < m_count; i++) {
+		// RandRect
+		float randX, randY;
+		float randVelX = 0, randVelY = 0, randVelZ = 0;
+
+		int index = i * verticesPerQuad * floatsPerVertex;
+		float startTime, lifeTime;
+		float startTimeMax = 2.f;
+		float lifeTimeMax = 6.f;
+		float ratio, amp;
+		float ratioMin = 2.f;
+		float ampMin = 0.2f;
+
+		startTime = ((float)(rand() / (float)RAND_MAX)*startTimeMax);
+		lifeTime = ((float)(rand() / (float)RAND_MAX)*lifeTimeMax);
+		ratio = ((float)(rand() / (float)RAND_MAX))*ratioMin;
+		amp = ((float)(rand() / (float)RAND_MAX))*ampMin;
+
+		randX = 0;
+		randY = 0;
+
+		randVelX = 2.f*((float)(rand() / (float)RAND_MAX) - 0.5f)+0.5f;
+		randVelY = 2.f*((float)(rand() / (float)RAND_MAX) - 0.5f)+0.5f;
+
+		point[index] = randX - rectSize; index++;
+		point[index] = randY - rectSize; index++;
+		point[index] = 0.f; index++;
+		point[index] = randVelX; index++;
+		point[index] = randVelY; index++;
+		point[index] = randVelZ; index++;
+		point[index] = startTime; index++;
+		point[index] = lifeTime; index++;
+		point[index] = ratio; index++;
+		point[index] = amp; index++;
+
+		point[index] = randX - rectSize; index++;
+		point[index] = randY + rectSize; index++;
+		point[index] = 0.f; index++;
+		point[index] = randVelX; index++;
+		point[index] = randVelY; index++;
+		point[index] = randVelZ; index++;
+		point[index] = startTime; index++;
+		point[index] = lifeTime; index++;
+		point[index] = ratio; index++;
+		point[index] = amp; index++;
+
+		point[index] = randX + rectSize; index++;
+		point[index] = randY + rectSize; index++;
+		point[index] = 0.f; index++;
+		point[index] = randVelX; index++;
+		point[index] = randVelY; index++;
+		point[index] = randVelZ; index++;
+		point[index] = startTime; index++;
+		point[index] = lifeTime; index++;
+		point[index] = ratio; index++;
+		point[index] = amp; index++;
+
+		point[index] = randX - rectSize; index++;
+		point[index] = randY - rectSize; index++;
+		point[index] = 0.f; index++;
+		point[index] = randVelX; index++;
+		point[index] = randVelY; index++;
+		point[index] = randVelZ; index++;
+		point[index] = startTime; index++;
+		point[index] = lifeTime; index++;
+		point[index] = ratio; index++;
+		point[index] = amp; index++;
+
+		point[index] = randX + rectSize; index++;
+		point[index] = randY + rectSize; index++;
+		point[index] = 0.f; index++;
+		point[index] = randVelX; index++;
+		point[index] = randVelY; index++;
+		point[index] = randVelZ; index++;
+		point[index] = startTime; index++;
+		point[index] = lifeTime; index++;
+		point[index] = ratio; index++;
+		point[index] = amp; index++;
+
+		point[index] = randX + rectSize; index++;
+		point[index] = randY - rectSize; index++;
+		point[index] = 0.f; index++;
+		point[index] = randVelX; index++;
+		point[index] = randVelY; index++;
+		point[index] = randVelZ; index++;
+		point[index] = startTime; index++;
+		point[index] = lifeTime; index++;
+		point[index] = ratio; index++;
+		point[index] = amp; index++;
+	}
+	glGenBuffers(1, &m_VBORandRect);
+	glBindBuffer(GL_ARRAY_BUFFER, m_VBORandRect);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(m_VBORandRect) * size, point, GL_STATIC_DRAW);
+	vertex_count_array = count * verticesPerQuad;
+}
+
 void Renderer::CreateProxyGeometry()
 {
 	float basePosX = -0.5f;
@@ -585,4 +693,36 @@ void Renderer::Lecture5()
 	glDisableVertexAttribArray(aPos);
 	glDisableVertexAttribArray(aVel);
 	glDisableVertexAttribArray(aStartLife);
+}
+
+void Renderer::Lecture6()
+{
+	glUseProgram(m_SimpleVelShader2);
+
+	GLuint Shader = m_SimpleVelShader2;
+
+	GLuint uTime = glGetUniformLocation(Shader, "u_Time");
+	//GLuint uRepeat = glGetUniformLocation(Shader, "u_Repeat");
+	glUniform1f(uTime, g_Time);
+	//g_Time += ((float)(rand() / (float)RAND_MAX) - 0.5f)*0.0001f; cute
+	g_Time += 0.0002;
+
+	GLuint aPos = glGetAttribLocation(Shader, "a_Position");
+	GLuint aVel = glGetAttribLocation(Shader, "a_Vel");
+	GLuint aStartLifeRatioAmp = glGetAttribLocation(Shader, "a_StartLifeRatioAmp");
+
+	glEnableVertexAttribArray(aPos);
+	glEnableVertexAttribArray(aVel);
+	glEnableVertexAttribArray(aStartLifeRatioAmp);
+
+	glBindBuffer(GL_ARRAY_BUFFER, m_VBORandRect);
+	glVertexAttribPointer(aPos, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 10, 0);
+	glVertexAttribPointer(aVel, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 10, (GLvoid*)(sizeof(float) * 3));
+	glVertexAttribPointer(aStartLifeRatioAmp, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 10, (GLvoid*)(sizeof(float)*6));
+
+	glDrawArrays(GL_TRIANGLES, 0, vertex_count_array);
+
+	glDisableVertexAttribArray(aPos);
+	glDisableVertexAttribArray(aVel);
+	glDisableVertexAttribArray(aStartLifeRatioAmp);
 }

@@ -25,7 +25,9 @@ public:
 	void Lecture3();
 	void Lecture4();
 	void Lecture5();
+	void Lecture6();
 	void RandomRect(int count);
+	void MakeRect(int count);
 
 private:
 	void Initialize(int windowSizeX, int windowSizeY);
@@ -54,5 +56,6 @@ private:
 
 	GLuint m_SolidRectShader = 0;
 	GLuint m_SimpleVelShader = 0;
+	GLuint m_SimpleVelShader2 = 0;
 };
 
