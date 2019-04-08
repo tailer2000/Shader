@@ -2,7 +2,22 @@
 
 layout(location=0) out vec4 FragColor;
 
+in vec4 v_Color;
+in vec2 v_OriPos;
+in float v_Radius;
+
 void main()
 {
-	FragColor = vec4(1,0,0,1);
+     vec4 newColor;
+     float dis = sqrt(v_OriPos.x*v_OriPos.x + v_OriPos.y* v_OriPos.y);
+    if( dis < v_Radius)
+    {
+        newColor = v_Color;
+        newColor.a = dis / v_Radius;
+    }
+    else{
+        newColor = vec4(0);
+    }
+
+	FragColor = newColor;
 }
