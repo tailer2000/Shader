@@ -84,7 +84,7 @@ void Renderer::CreateVertexBufferObjects()
 
 	//RandomRect(300);
 
-	MakeRect(300);
+	MakeRect(1000);
 }
 
 void Renderer::AddShader(GLuint ShaderProgram, const char* pShaderText, GLenum ShaderType)
@@ -450,7 +450,7 @@ void Renderer::MakeRect(int count)
 	m_count = count;
 	float rectSize = 0.01f;
 	int verticesPerQuad = 6;
-	int floatsPerVertex = 3 + 3 + 2 + 2;
+	int floatsPerVertex = 3 + 3 + 2 + 2 + 1;
 	int size = count * verticesPerQuad * floatsPerVertex;
 	float *point = new float[size];
 
@@ -465,18 +465,21 @@ void Renderer::MakeRect(int count)
 		float lifeTimeMax = 6.f;
 		float ratio, amp;
 		float ratioMin = 2.f;
-		float ampMin = 0.2f;
+		float ampMin = 1.f;
+		float value = 0.f;
+		float thre = 1.f;
 
 		startTime = ((float)(rand() / (float)RAND_MAX)*startTimeMax);
 		lifeTime = ((float)(rand() / (float)RAND_MAX)*lifeTimeMax);
 		ratio = ((float)(rand() / (float)RAND_MAX))*ratioMin;
 		amp = ((float)(rand() / (float)RAND_MAX))*ampMin;
+		value = value + ((float)(rand() / (float)RAND_MAX))*thre;
 
 		randX = 0;
 		randY = 0;
 
-		randVelX = 2.f*((float)(rand() / (float)RAND_MAX) - 0.5f)+0.5f;
-		randVelY = 2.f*((float)(rand() / (float)RAND_MAX) - 0.5f)+0.5f;
+		randVelX = 2.f*((float)(rand() / (float)RAND_MAX) - 0.5f);
+		randVelY = 2.f*((float)(rand() / (float)RAND_MAX) - 0.5f);
 
 		point[index] = randX - rectSize; index++;
 		point[index] = randY - rectSize; index++;
@@ -488,6 +491,7 @@ void Renderer::MakeRect(int count)
 		point[index] = lifeTime; index++;
 		point[index] = ratio; index++;
 		point[index] = amp; index++;
+		point[index] = value; index++;
 
 		point[index] = randX - rectSize; index++;
 		point[index] = randY + rectSize; index++;
@@ -499,6 +503,7 @@ void Renderer::MakeRect(int count)
 		point[index] = lifeTime; index++;
 		point[index] = ratio; index++;
 		point[index] = amp; index++;
+		point[index] = value; index++;
 
 		point[index] = randX + rectSize; index++;
 		point[index] = randY + rectSize; index++;
@@ -510,6 +515,7 @@ void Renderer::MakeRect(int count)
 		point[index] = lifeTime; index++;
 		point[index] = ratio; index++;
 		point[index] = amp; index++;
+		point[index] = value; index++;
 
 		point[index] = randX - rectSize; index++;
 		point[index] = randY - rectSize; index++;
@@ -521,6 +527,7 @@ void Renderer::MakeRect(int count)
 		point[index] = lifeTime; index++;
 		point[index] = ratio; index++;
 		point[index] = amp; index++;
+		point[index] = value; index++;
 
 		point[index] = randX + rectSize; index++;
 		point[index] = randY + rectSize; index++;
@@ -532,6 +539,7 @@ void Renderer::MakeRect(int count)
 		point[index] = lifeTime; index++;
 		point[index] = ratio; index++;
 		point[index] = amp; index++;
+		point[index] = value; index++;
 
 		point[index] = randX + rectSize; index++;
 		point[index] = randY - rectSize; index++;
@@ -543,6 +551,7 @@ void Renderer::MakeRect(int count)
 		point[index] = lifeTime; index++;
 		point[index] = ratio; index++;
 		point[index] = amp; index++;
+		point[index] = value; index++;
 	}
 	glGenBuffers(1, &m_VBORandRect);
 	glBindBuffer(GL_ARRAY_BUFFER, m_VBORandRect);
@@ -710,19 +719,23 @@ void Renderer::Lecture6()
 	GLuint aPos = glGetAttribLocation(Shader, "a_Position");
 	GLuint aVel = glGetAttribLocation(Shader, "a_Vel");
 	GLuint aStartLifeRatioAmp = glGetAttribLocation(Shader, "a_StartLifeRatioAmp");
+	GLuint aValue = glGetAttribLocation(Shader, "a_Value");
 
 	glEnableVertexAttribArray(aPos);
 	glEnableVertexAttribArray(aVel);
 	glEnableVertexAttribArray(aStartLifeRatioAmp);
+	glEnableVertexAttribArray(aValue);
 
 	glBindBuffer(GL_ARRAY_BUFFER, m_VBORandRect);
-	glVertexAttribPointer(aPos, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 10, 0);
-	glVertexAttribPointer(aVel, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 10, (GLvoid*)(sizeof(float) * 3));
-	glVertexAttribPointer(aStartLifeRatioAmp, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 10, (GLvoid*)(sizeof(float)*6));
+	glVertexAttribPointer(aPos, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 11, 0);
+	glVertexAttribPointer(aVel, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 11, (GLvoid*)(sizeof(float) * 3));
+	glVertexAttribPointer(aStartLifeRatioAmp, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 11, (GLvoid*)(sizeof(float)*6));
+	glVertexAttribPointer(aValue, 1, GL_FLOAT, GL_FALSE, sizeof(float) * 11, (GLvoid*)(sizeof(float) * 10));
 
 	glDrawArrays(GL_TRIANGLES, 0, vertex_count_array);
 
 	glDisableVertexAttribArray(aPos);
 	glDisableVertexAttribArray(aVel);
 	glDisableVertexAttribArray(aStartLifeRatioAmp);
+	glDisableVertexAttribArray(aValue);
 }
