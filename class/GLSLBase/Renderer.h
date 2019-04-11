@@ -26,8 +26,11 @@ public:
 	void Lecture4();
 	void Lecture5();
 	void Lecture6();
+	void Lecture7();
+
 	void RandomRect(int count);
 	void MakeRect(int count);
+	void Solid7();
 
 private:
 	void Initialize(int windowSizeX, int windowSizeY);

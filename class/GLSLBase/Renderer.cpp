@@ -26,9 +26,9 @@ void Renderer::Initialize(int windowSizeX, int windowSizeY)
 	m_WindowSizeY = windowSizeY;
 
 	//Load shaders
-	//m_SolidRectShader = CompileShaders("./Shaders/SolidRect.vs", "./Shaders/SolidRect.fs");
+	m_SolidRectShader = CompileShaders("./Shaders/SolidRect.vs", "./Shaders/SolidRect.fs");
 	//m_SimpleVelShader = CompileShaders("./Shaders/SimpleVel.vs", "./Shaders/SimpleVel.fs");
-	m_SimpleVelShader2 = CompileShaders("./Shaders/SimpleVel2.vs", "./Shaders/SimpleVel2.fs");
+	//m_SimpleVelShader2 = CompileShaders("./Shaders/SimpleVel2.vs", "./Shaders/SimpleVel2.fs");
 	
 	//Create VBOs
 	CreateVertexBufferObjects();
@@ -36,23 +36,6 @@ void Renderer::Initialize(int windowSizeX, int windowSizeY)
 
 void Renderer::CreateVertexBufferObjects()
 {
-	float size = 0.02f;
-
-	float rect[]
-		=
-	{
-		-size, -size, 0.f, 0.5,	// x,y,z,w
-		-size, size, 0.f, 0.5,
-		size, size, 0.f, 0.5, //Triangle1
-		-size, -size, 0.f, 0.5,
-		size, size, 0.5, 0.5,
-		size, -size, 0.5, 0.5,//Triangle2
-	};
-
-	glGenBuffers(1, &m_VBORect);
-	glBindBuffer(GL_ARRAY_BUFFER, m_VBORect);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(rect), rect, GL_STATIC_DRAW);
-
 	float color[]
 		=
 	{
@@ -84,7 +67,9 @@ void Renderer::CreateVertexBufferObjects()
 
 	//RandomRect(300);
 
-	MakeRect(20000);
+	//MakeRect(20000);
+
+	Solid7();
 }
 
 void Renderer::AddShader(GLuint ShaderProgram, const char* pShaderText, GLenum ShaderType)
@@ -343,17 +328,15 @@ void Renderer::Test()
 
 void Renderer::Lecture2()
 {
-	/*
 	glUseProgram(m_SolidRectShader);
 
 	glEnableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, m_VBORandRect);
+	glBindBuffer(GL_ARRAY_BUFFER, m_VBORect);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
 	glDrawArrays(GL_TRIANGLES, 0, 3);
 
 	glDisableVertexAttribArray(0);
-	*/
 }
 
 // 랜덤 사각형 (파티클)
@@ -776,4 +759,128 @@ void Renderer::Lecture6()
 	glDisableVertexAttribArray(aColor);
 
 	glDisable(GL_BLEND);
+}
+
+void Renderer::Solid7()
+{
+	float size = 0.5f;
+
+	int verticesPerQuad = 6;
+	int floatsPerVertex = 3 + 4 + 2;
+	int Allsize = verticesPerQuad * floatsPerVertex;
+
+	int index = 0;
+
+	float r = 1;
+	float g = 1;
+	float b = 1;
+	float a = 1.f;
+
+	float *rect = new float[Allsize];
+
+	rect[index] = -size; ++index;
+	rect[index] = -size; ++index;
+	rect[index] = 0; ++index;
+	rect[index] = r; ++index;
+	rect[index] = g; ++index;
+	rect[index] = b; ++index;
+	rect[index] = a; ++index;
+	rect[index] = 0; ++index;
+	rect[index] = 0; ++index;
+
+	rect[index] = -size; ++index;
+	rect[index] = size; ++index;
+	rect[index] = 0; ++index;
+	rect[index] = r; ++index;
+	rect[index] = g; ++index;
+	rect[index] = b; ++index;
+	rect[index] = a; ++index;
+	rect[index] = 0; ++index;
+	rect[index] = 1; ++index;
+
+	rect[index] = size; ++index;
+	rect[index] = size; ++index;
+	rect[index] = 0; ++index;
+	rect[index] = r; ++index;
+	rect[index] = g; ++index;
+	rect[index] = b; ++index;
+	rect[index] = a; ++index;
+	rect[index] = 1; ++index;
+	rect[index] = 1; ++index;
+
+	rect[index] = -size; ++index;
+	rect[index] = -size; ++index;
+	rect[index] = 0; ++index;
+	rect[index] = r; ++index;
+	rect[index] = g; ++index;
+	rect[index] = b; ++index;
+	rect[index] = a; ++index;
+	rect[index] = 0; ++index;
+	rect[index] = 0; ++index;
+
+	rect[index] = size; ++index;
+	rect[index] = size; ++index;
+	rect[index] = 0; ++index;
+	rect[index] = r; ++index;
+	rect[index] = g; ++index;
+	rect[index] = b; ++index;
+	rect[index] = a; ++index;
+	rect[index] = 1; ++index;
+	rect[index] = 1; ++index;
+
+	rect[index] = size; ++index;
+	rect[index] = -size; ++index;
+	rect[index] = 0; ++index;
+	rect[index] = r; ++index;
+	rect[index] = g; ++index;
+	rect[index] = b; ++index;
+	rect[index] = a; ++index;
+	rect[index] = 1; ++index;
+	rect[index] = 0;
+
+	/*
+	float rect[]=
+	{
+		-size, -size, 0, r, g, b, a,
+		-size, size, 0, r, g, b, a,
+		size, size, 0, r, g, b, a,
+		-size, -size, 0, r, g, b, a,
+		size, size, 0, r, g, b, a,
+		size, -size, 0, r, g, b, a,
+	};
+	//*/
+
+	glGenBuffers(1, &m_VBORect);
+	glBindBuffer(GL_ARRAY_BUFFER, m_VBORect);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(m_VBORect) * Allsize, rect, GL_STATIC_DRAW);
+}
+
+void Renderer::Lecture7()
+{
+	glUseProgram(m_SolidRectShader);
+
+	//glEnable(GL_BLEND);
+	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	GLuint aPos = glGetAttribLocation(m_SolidRectShader, "a_Position");
+	GLuint aColor = glGetAttribLocation(m_SolidRectShader, "a_Color");
+	GLuint aUV = glGetAttribLocation(m_SolidRectShader, "a_Uv");
+
+	glEnableVertexAttribArray(aPos);
+	glEnableVertexAttribArray(aColor);
+	glEnableVertexAttribArray(aUV);
+
+	glBindBuffer(GL_ARRAY_BUFFER, m_VBORect);
+
+	glVertexAttribPointer(aPos, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 9, 0);
+	glVertexAttribPointer(aColor, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 9, (GLvoid*)(sizeof(float) * 3));
+	glVertexAttribPointer(aUV, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 9, (GLvoid*)(sizeof(float) * 7));
+
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+
+	glDisableVertexAttribArray(aPos);
+	glDisableVertexAttribArray(aColor);
+	glDisableVertexAttribArray(aUV);
+
+	//glDisable(GL_BLEND);
 }
