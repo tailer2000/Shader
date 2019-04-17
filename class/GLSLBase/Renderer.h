@@ -31,6 +31,8 @@ public:
 	void RandomRect(int count);
 	void MakeRect(int count);
 	void Solid7();
+	void Fillfloat(float n);
+	void DrawTextRect();//GLuint tex);
 
 private:
 	void Initialize(int windowSizeX, int windowSizeY);
@@ -50,15 +52,20 @@ private:
 	int m_count = 0;
 
 	GLuint m_VBORect = 0;
+	GLuint m_VBORect2 = 0;
 	GLuint m_VBOTri = 0;
 	GLuint m_VBORandRect = 0;
 	GLuint m_VBO_GridMesh = 0;
 	GLuint m_VBORectColor = 0;
+	GLuint m_VBOTextRect = 0;
 
 	unsigned int vertex_count_array;
 
 	GLuint m_SolidRectShader = 0;
+	GLuint m_SolidRectShader2 = 0;
 	GLuint m_SimpleVelShader = 0;
 	GLuint m_SimpleVelShader2 = 0;
+	GLuint m_Texture = 0;
+	GLuint m_TextureRectShader = 0;
 };
 

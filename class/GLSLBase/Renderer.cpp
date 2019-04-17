@@ -27,9 +27,12 @@ void Renderer::Initialize(int windowSizeX, int windowSizeY)
 
 	//Load shaders
 	m_SolidRectShader = CompileShaders("./Shaders/SolidRect.vs", "./Shaders/SolidRect.fs");
+	//m_SolidRectShader2 = CompileShaders("./Shaders/SolidRect2.vs", "./Shaders/SolidRect2.fs");	// fillallShader
 	//m_SimpleVelShader = CompileShaders("./Shaders/SimpleVel.vs", "./Shaders/SimpleVel.fs");
-	//m_SimpleVelShader2 = CompileShaders("./Shaders/SimpleVel2.vs", "./Shaders/SimpleVel2.fs");
+	m_SimpleVelShader2 = CompileShaders("./Shaders/SimpleVel2.vs", "./Shaders/SimpleVel2.fs");
+	m_TextureRectShader = CompileShaders("./Shaders/TextRect.vs", "./Shaders/TextRect.fs");
 	
+	m_Texture = CreatePngTexture("./Shaders/Light.png");
 	//Create VBOs
 	CreateVertexBufferObjects();
 }
@@ -65,11 +68,42 @@ void Renderer::CreateVertexBufferObjects()
 	glBindBuffer(GL_ARRAY_BUFFER, m_VBOTri);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(tri), tri, GL_STATIC_DRAW);
 
+	float fill[]
+		=
+	{
+		-250, 250, 0,
+		250, 250, 0,
+		-250, -250, 0, //Triangle1
+		-250, -250, 0,
+		250, 250, 0,
+		250, -250, 0,//Triangle2
+	};
+
+	glGenBuffers(1, &m_VBORect2);
+	glBindBuffer(GL_ARRAY_BUFFER, m_VBORect2);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(fill), fill, GL_STATIC_DRAW);
+
 	//RandomRect(300);
 
 	//MakeRect(20000);
 
-	Solid7();
+	//Solid7();
+
+	float size = 0.5f;
+	float textrect[]
+		=
+	{
+		-size, size, 0, 0.0f, 1.0f,
+		-size, -size, 0, 0.0f, 0.0f,
+		size, size, 0, 1.0f, 1.0f,//Triangle1
+		size, size, 0, 1.0f, 1.0f,
+		-size, -size, 0, 0.0f, 0.0f,
+		size, -size, 0, 1.0f, 0.0f,//Triangle2
+	};
+
+	glGenBuffers(1, &m_VBOTextRect);
+	glBindBuffer(GL_ARRAY_BUFFER, m_VBOTextRect);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(textrect), textrect, GL_STATIC_DRAW);
 }
 
 void Renderer::AddShader(GLuint ShaderProgram, const char* pShaderText, GLenum ShaderType)
@@ -433,7 +467,7 @@ void Renderer::MakeRect(int count)
 	m_count = count;
 	float rectSize = 0.01f;
 	int verticesPerQuad = 6;
-	int floatsPerVertex = 3 + 3 + 2 + 2 + 1 + 4;
+	int floatsPerVertex = 3 + 3 + 2 + 2 + 1 + 4 + 2;
 	int size = count * verticesPerQuad * floatsPerVertex;
 	float *point = new float[size];
 
@@ -484,6 +518,8 @@ void Renderer::MakeRect(int count)
 		point[index] = g; index++;
 		point[index] = b; index++;
 		point[index] = a; index++;
+		point[index] = 0.0f; index++;
+		point[index] = 0.0f; index++;
 
 		point[index] = randX - rectSize; index++;
 		point[index] = randY + rectSize; index++;
@@ -500,6 +536,8 @@ void Renderer::MakeRect(int count)
 		point[index] = g; index++;
 		point[index] = b; index++;
 		point[index] = a; index++;
+		point[index] = 0.0f; index++;
+		point[index] = 1.0f; index++;
 
 		point[index] = randX + rectSize; index++;
 		point[index] = randY + rectSize; index++;
@@ -516,6 +554,8 @@ void Renderer::MakeRect(int count)
 		point[index] = g; index++;
 		point[index] = b; index++;
 		point[index] = a; index++;
+		point[index] = 1.0f; index++;
+		point[index] = 1.0f; index++;
 
 		point[index] = randX - rectSize; index++;
 		point[index] = randY - rectSize; index++;
@@ -532,6 +572,8 @@ void Renderer::MakeRect(int count)
 		point[index] = g; index++;
 		point[index] = b; index++;
 		point[index] = a; index++;
+		point[index] = 0.0f; index++;
+		point[index] = 0.0f; index++;
 
 		point[index] = randX + rectSize; index++;
 		point[index] = randY + rectSize; index++;
@@ -548,6 +590,8 @@ void Renderer::MakeRect(int count)
 		point[index] = g; index++;
 		point[index] = b; index++;
 		point[index] = a; index++;
+		point[index] = 1.0f; index++;
+		point[index] = 1.0f; index++;
 
 		point[index] = randX + rectSize; index++;
 		point[index] = randY - rectSize; index++;
@@ -564,6 +608,8 @@ void Renderer::MakeRect(int count)
 		point[index] = g; index++;
 		point[index] = b; index++;
 		point[index] = a; index++;
+		point[index] = 1.0f; index++;
+		point[index] = 0.0f; index++;
 	}
 	glGenBuffers(1, &m_VBORandRect);
 	glBindBuffer(GL_ARRAY_BUFFER, m_VBORandRect);
@@ -731,24 +777,32 @@ void Renderer::Lecture6()
 	//g_Time += ((float)(rand() / (float)RAND_MAX) - 0.5f)*0.0001f; cute
 	g_Time += 0.0002;
 
+	GLuint uniformTex = glGetUniformLocation(Shader, "uTexSampler");
+	glUniform1i(uniformTex, 0);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, m_Texture);
+
 	GLuint aPos = glGetAttribLocation(Shader, "a_Position");
 	GLuint aVel = glGetAttribLocation(Shader, "a_Vel");
 	GLuint aStartLifeRatioAmp = glGetAttribLocation(Shader, "a_StartLifeRatioAmp");
 	GLuint aValue = glGetAttribLocation(Shader, "a_Value");
 	GLuint aColor = glGetAttribLocation(Shader, "a_Color");
+	GLuint aTexPos = glGetAttribLocation(Shader, "a_TexPos");
 
 	glEnableVertexAttribArray(aPos);
 	glEnableVertexAttribArray(aVel);
 	glEnableVertexAttribArray(aStartLifeRatioAmp);
 	glEnableVertexAttribArray(aValue);
 	glEnableVertexAttribArray(aColor);
+	glEnableVertexAttribArray(aTexPos);
 
 	glBindBuffer(GL_ARRAY_BUFFER, m_VBORandRect);
-	glVertexAttribPointer(aPos, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 15, 0);
-	glVertexAttribPointer(aVel, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 15, (GLvoid*)(sizeof(float) * 3));
-	glVertexAttribPointer(aStartLifeRatioAmp, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 15, (GLvoid*)(sizeof(float)*6));
-	glVertexAttribPointer(aValue, 1, GL_FLOAT, GL_FALSE, sizeof(float) * 15, (GLvoid*)(sizeof(float) * 10));
-	glVertexAttribPointer(aColor, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 15, (GLvoid*)(sizeof(float) * 11));
+	glVertexAttribPointer(aPos, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 17, 0);
+	glVertexAttribPointer(aVel, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 17, (GLvoid*)(sizeof(float) * 3));
+	glVertexAttribPointer(aStartLifeRatioAmp, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 17, (GLvoid*)(sizeof(float)*6));
+	glVertexAttribPointer(aValue, 1, GL_FLOAT, GL_FALSE, sizeof(float) * 17, (GLvoid*)(sizeof(float) * 10));
+	glVertexAttribPointer(aColor, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 17, (GLvoid*)(sizeof(float) * 11));
+	glVertexAttribPointer(aTexPos, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 17, (GLvoid*)(sizeof(float) * 15));
 
 	glDrawArrays(GL_TRIANGLES, 0, vertex_count_array);
 
@@ -757,6 +811,7 @@ void Renderer::Lecture6()
 	glDisableVertexAttribArray(aStartLifeRatioAmp);
 	glDisableVertexAttribArray(aValue);
 	glDisableVertexAttribArray(aColor);
+	glDisableVertexAttribArray(aTexPos);
 
 	glDisable(GL_BLEND);
 }
@@ -859,8 +914,17 @@ void Renderer::Lecture7()
 {
 	glUseProgram(m_SolidRectShader);
 
-	//glEnable(GL_BLEND);
-	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	GLfloat points[] = { 0.0, 0.0, -0.5, -0.5, -0.3, -0.3, 0.1, 0.1, 0.3, 0.3 };
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	GLuint uPoint = glGetUniformLocation(m_SolidRectShader, "u_Points");
+	glUniform2fv(uPoint, 5, points);
+
+	GLuint uTime = glGetUniformLocation(m_SolidRectShader, "u_Time");
+	glUniform1f(uTime, g_Time);
+	g_Time += 0.002;
 
 	GLuint aPos = glGetAttribLocation(m_SolidRectShader, "a_Position");
 	GLuint aColor = glGetAttribLocation(m_SolidRectShader, "a_Color");
@@ -882,5 +946,53 @@ void Renderer::Lecture7()
 	glDisableVertexAttribArray(aColor);
 	glDisableVertexAttribArray(aUV);
 
-	//glDisable(GL_BLEND);
+	glDisable(GL_BLEND);
+}
+
+void Renderer::Fillfloat(float n)
+{
+	glUseProgram(m_SolidRectShader2);
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	GLuint aPos = glGetAttribLocation(m_SolidRectShader2, "a_Position");
+
+	glEnableVertexAttribArray(aPos);
+
+	glBindBuffer(GL_ARRAY_BUFFER, m_VBORect2);
+
+	glVertexAttribPointer(aPos, 3, GL_FLOAT, GL_FALSE, sizeof(float)*3, 0);
+
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+
+	glDisableVertexAttribArray(aPos);
+
+	glDisable(GL_BLEND);
+}
+
+void Renderer::DrawTextRect()//GLuint tex)
+{
+	GLuint shader = m_TextureRectShader;
+
+	glUseProgram(shader);
+
+	GLuint uTime = glGetUniformLocation(shader, "u_Time");
+	glUniform1f(uTime, g_Time);
+	g_Time += 0.02;
+
+	GLuint aPos = glGetAttribLocation(shader, "a_Position");
+	GLuint aTex = glGetAttribLocation(shader, "a_Tex");
+
+	glEnableVertexAttribArray(aPos);
+	glEnableVertexAttribArray(aTex);
+
+	glBindBuffer(GL_ARRAY_BUFFER, m_VBOTextRect);
+
+	glVertexAttribPointer(aPos, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 5, 0);
+	glVertexAttribPointer(aTex, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 5, (GLvoid*)(sizeof(float) * 3));
+
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glDisableVertexAttribArray(aPos);
+	glDisableVertexAttribArray(aTex);
 }

@@ -176,6 +176,10 @@
     <None Include="Shaders\SimpleVel2.vs" />
     <None Include="Shaders\SolidRect.fs" />
     <None Include="Shaders\SolidRect.vs" />
+    <None Include="Shaders\SolidRect2.fs" />
+    <None Include="Shaders\SolidRect2.vs" />
+    <None Include="Shaders\TextRect.fs" />
+    <None Include="Shaders\TextRect.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

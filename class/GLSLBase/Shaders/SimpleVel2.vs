@@ -2,6 +2,7 @@
 
 // Attributes
 in vec3 a_Position;
+in vec2 a_TexPos;
 in vec3 a_Vel;
 in vec4 a_StartLifeRatioAmp;
 in float a_Value;
@@ -11,6 +12,7 @@ in vec4 a_Color;
 out vec4 v_Color;
 out vec2 v_OriPos;
 out float v_Radius;
+out vec2 v_TexPos;
 
 uniform float u_Time;
 const float PI = 3.141952;
@@ -55,5 +57,6 @@ void main()
 
 	gl_Position = vec4(newPos.xyz, 1);
 	v_Color = vec4(a_Color.xyz, newAlpha);
+	v_TexPos = vec2(a_TexPos);
 	
 }

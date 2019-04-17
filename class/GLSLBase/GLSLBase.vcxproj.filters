@@ -47,6 +47,18 @@
     <None Include="Shaders\SolidRect.vs">
       <Filter>Shader</Filter>
     </None>
+    <None Include="Shaders\SolidRect2.fs">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="Shaders\SolidRect2.vs">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="Shaders\TextRect.fs">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="Shaders\TextRect.vs">
+      <Filter>Shader</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source">
