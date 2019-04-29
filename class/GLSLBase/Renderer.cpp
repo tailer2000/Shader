@@ -9,6 +9,7 @@
 
 float g_Time = 0.f;
 
+
 Renderer::Renderer(int windowSizeX, int windowSizeY)
 {
 	Initialize(windowSizeX, windowSizeY);
@@ -104,6 +105,27 @@ void Renderer::CreateVertexBufferObjects()
 	glGenBuffers(1, &m_VBOTextRect);
 	glBindBuffer(GL_ARRAY_BUFFER, m_VBOTextRect);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(textrect), textrect, GL_STATIC_DRAW);
+
+	// chechkboard
+	static const GLulong checkboard[] =
+	{
+		0xFFFFFFFF, 0x00000000,0xFFFFFFFF, 0x00000000,0xFFFFFFFF, 0x00000000,0xFFFFFFFF, 0x00000000,
+		0x00000000,0xFFFFFFFF, 0x00000000,0xFFFFFFFF, 0x00000000,0xFFFFFFFF, 0x00000000, 0xFFFFFFFF,
+		0xFFFFFFFF, 0x00000000,0xFFFFFFFF, 0x00000000,0xFFFFFFFF, 0x00000000,0xFFFFFFFF, 0x00000000,
+		0x00000000,0xFFFFFFFF, 0x00000000,0xFFFFFFFF, 0x00000000,0xFFFFFFFF, 0x00000000, 0xFFFFFFFF,
+		0xFFFFFFFF, 0x00000000,0xFFFFFFFF, 0x00000000,0xFFFFFFFF, 0x00000000,0xFFFFFFFF, 0x00000000,
+		0x00000000,0xFFFFFFFF, 0x00000000,0xFFFFFFFF, 0x00000000,0xFFFFFFFF, 0x00000000, 0xFFFFFFFF,
+		0xFFFFFFFF, 0x00000000,0xFFFFFFFF, 0x00000000,0xFFFFFFFF, 0x00000000,0xFFFFFFFF, 0x00000000,
+		0x00000000,0xFFFFFFFF, 0x00000000,0xFFFFFFFF, 0x00000000,0xFFFFFFFF, 0x00000000, 0xFFFFFFFF,
+	};
+
+	glGenTextures(1, &m_CheckBoard);
+	glBindTexture(GL_TEXTURE_2D, m_CheckBoard);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 8, 8, 0, GL_RGBA, GL_UNSIGNED_BYTE,checkboard );
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 }
 
 void Renderer::AddShader(GLuint ShaderProgram, const char* pShaderText, GLenum ShaderType)
@@ -326,7 +348,7 @@ GLuint Renderer::CreateBmpTexture(char * filePath)
 	glBindTexture(GL_TEXTURE_2D, temp);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, bmp);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, bmp);
 
 	return temp;
 }
@@ -979,7 +1001,12 @@ void Renderer::DrawTextRect()//GLuint tex)
 
 	GLuint uTime = glGetUniformLocation(shader, "u_Time");
 	glUniform1f(uTime, g_Time);
-	g_Time += 0.02;
+	g_Time += 0.2;
+
+	int uniformTex = glGetUniformLocation(shader, "u_TexSampler");
+	glUniform1i(uniformTex, 0);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, m_CheckBoard);
 
 	GLuint aPos = glGetAttribLocation(shader, "a_Position");
 	GLuint aTex = glGetAttribLocation(shader, "a_Tex");

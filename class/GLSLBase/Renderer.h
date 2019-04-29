@@ -58,6 +58,7 @@ private:
 	GLuint m_VBO_GridMesh = 0;
 	GLuint m_VBORectColor = 0;
 	GLuint m_VBOTextRect = 0;
+	GLuint m_CheckBoard = 0;
 
 	unsigned int vertex_count_array;
 

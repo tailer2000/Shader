@@ -2,21 +2,20 @@
 
 layout(location=0) out vec4 FragColor;
 
+uniform sampler2D u_TexSampler;
 in vec2 v_Tex;
 
 uniform float u_Time;
-const float PI = 3.141952;
 
 void main()
 {
-    vec4 newColor = vec4(0);
-    float x = (sin(v_Tex.x *PI*2 + u_Time)+1)/2;
+    //vec2 new_Tex = fract(v_Tex*2 + vec2(u_Time, 0));
+    vec2 new_Tex = abs(v_Tex - vec2(0, 0.5)) + vec2(0, 0.5);
 
-    if(v_Tex.y < x && x - 0.01 < v_Tex.y)
-    {
-        newColor = vec4(1);
-    }
-
+    vec4 newColor = texture(u_TexSampler, v_Tex);
+    newColor = vec4(new_Tex, 0, 1);
+   
+    
 
 	FragColor = newColor;
 }
