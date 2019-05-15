@@ -67,6 +67,7 @@ private:
 	GLuint m_SimpleVelShader = 0;
 	GLuint m_SimpleVelShader2 = 0;
 	GLuint m_Texture = 0;
+	GLuint m_Texture2 = 0;
 	GLuint m_TextureRectShader = 0;
 };
 

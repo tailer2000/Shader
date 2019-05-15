@@ -33,7 +33,8 @@ void Renderer::Initialize(int windowSizeX, int windowSizeY)
 	m_SimpleVelShader2 = CompileShaders("./Shaders/SimpleVel2.vs", "./Shaders/SimpleVel2.fs");
 	m_TextureRectShader = CompileShaders("./Shaders/TextRect.vs", "./Shaders/TextRect.fs");
 	
-	m_Texture = CreatePngTexture("./Shaders/Light.png");
+	m_Texture = CreatePngTexture("./Shaders/rgb.png");
+	m_Texture2 = CreatePngTexture("./Shaders/Light.png");
 	//Create VBOs
 	CreateVertexBufferObjects();
 }
@@ -1003,10 +1004,19 @@ void Renderer::DrawTextRect()//GLuint tex)
 	glUniform1f(uTime, g_Time);
 	g_Time += 0.2;
 
-	int uniformTex = glGetUniformLocation(shader, "u_TexSampler");
-	glUniform1i(uniformTex, 0);
 	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, m_Texture);
+	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, m_CheckBoard);
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, m_Texture2);
+
+	int uniformTex = glGetUniformLocation(shader, "u_TexSampler");
+	glUniform1i(uniformTex, 0);					// 0 , glTex의 0번을 쓰겠다.
+	int uniformTex1 = glGetUniformLocation(shader, "u_TexSampler1");
+	glUniform1i(uniformTex1, 1);
+	int uniformTex2 = glGetUniformLocation(shader, "u_TexSampler2");
+	glUniform1i(uniformTex2, 2);
 
 	GLuint aPos = glGetAttribLocation(shader, "a_Position");
 	GLuint aTex = glGetAttribLocation(shader, "a_Tex");
