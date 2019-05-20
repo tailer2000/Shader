@@ -27,14 +27,16 @@ void Renderer::Initialize(int windowSizeX, int windowSizeY)
 	m_WindowSizeY = windowSizeY;
 
 	//Load shaders
-	m_SolidRectShader = CompileShaders("./Shaders/SolidRect.vs", "./Shaders/SolidRect.fs");
+	//m_SolidRectShader = CompileShaders("./Shaders/SolidRect.vs", "./Shaders/SolidRect.fs");
 	//m_SolidRectShader2 = CompileShaders("./Shaders/SolidRect2.vs", "./Shaders/SolidRect2.fs");	// fillallShader
 	//m_SimpleVelShader = CompileShaders("./Shaders/SimpleVel.vs", "./Shaders/SimpleVel.fs");
-	m_SimpleVelShader2 = CompileShaders("./Shaders/SimpleVel2.vs", "./Shaders/SimpleVel2.fs");
-	m_TextureRectShader = CompileShaders("./Shaders/TextRect.vs", "./Shaders/TextRect.fs");
+	//m_SimpleVelShader2 = CompileShaders("./Shaders/SimpleVel2.vs", "./Shaders/SimpleVel2.fs");
+	//m_TextureRectShader = CompileShaders("./Shaders/TextRect.vs", "./Shaders/TextRect.fs");
+	m_DrawNumShader = CompileShaders("./Shaders/DrawNumber.vs", "./Shaders/DrawNumber.fs");
 	
-	m_Texture = CreatePngTexture("./Shaders/rgb.png");
-	m_Texture2 = CreatePngTexture("./Shaders/Light.png");
+	//m_Texture = CreatePngTexture("./Shaders/rgb.png");
+	//m_Texture2 = CreatePngTexture("./Shaders/Light.png");
+	m_NumTexture = CreatePngTexture("./Shaders/Numbers.png");
 	//Create VBOs
 	CreateVertexBufferObjects();
 }
@@ -1010,6 +1012,8 @@ void Renderer::DrawTextRect()//GLuint tex)
 	glBindTexture(GL_TEXTURE_2D, m_CheckBoard);
 	glActiveTexture(GL_TEXTURE2);
 	glBindTexture(GL_TEXTURE_2D, m_Texture2);
+	//glActiveTexture(GL_TEXTURE3);
+	//glBindTexture(GL_TEXTURE_2D, m_NumTexture);
 
 	int uniformTex = glGetUniformLocation(shader, "u_TexSampler");
 	glUniform1i(uniformTex, 0);					// 0 , glTex의 0번을 쓰겠다.
@@ -1017,6 +1021,8 @@ void Renderer::DrawTextRect()//GLuint tex)
 	glUniform1i(uniformTex1, 1);
 	int uniformTex2 = glGetUniformLocation(shader, "u_TexSampler2");
 	glUniform1i(uniformTex2, 2);
+	//int uniformTex3 = glGetUniformLocation(shader, "u_TexSampler3");
+	//glUniform1i(uniformTex3, 3);
 
 	GLuint aPos = glGetAttribLocation(shader, "a_Position");
 	GLuint aTex = glGetAttribLocation(shader, "a_Tex");
@@ -1030,6 +1036,39 @@ void Renderer::DrawTextRect()//GLuint tex)
 	glVertexAttribPointer(aTex, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 5, (GLvoid*)(sizeof(float) * 3));
 
 	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glDisableVertexAttribArray(aPos);
+	glDisableVertexAttribArray(aTex);
+}
+
+void Renderer::DrawNumber(int * num)
+{
+	GLuint shader = m_DrawNumShader;
+
+	glUseProgram(shader);
+
+	GLuint uNumber = glGetUniformLocation(shader, "u_Number");
+	glUniform1iv(uNumber, 3, num);
+
+	
+	// Vertex Settings
+	GLuint aPos = glGetAttribLocation(shader, "a_Position");
+	GLuint aTex = glGetAttribLocation(shader, "a_Tex");
+	glEnableVertexAttribArray(aPos);
+	glEnableVertexAttribArray(aTex);
+	glBindBuffer(GL_ARRAY_BUFFER, m_VBOTextRect);
+	glVertexAttribPointer(aPos, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 5, 0);
+	glVertexAttribPointer(aTex, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 5, (GLvoid*)(sizeof(float) * 3));
+
+	// Texture Settings
+	GLuint uniformTex = glGetUniformLocation(shader, "u_TexSampler");
+	glUniform1i(uniformTex, 0);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, m_NumTexture);
+
+	// Draw here
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+
+	// Restore to Default
 	glDisableVertexAttribArray(aPos);
 	glDisableVertexAttribArray(aTex);
 }

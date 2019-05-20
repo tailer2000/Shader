@@ -170,6 +170,8 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Shaders\DrawNumber.fs" />
+    <None Include="Shaders\DrawNumber.vs" />
     <None Include="Shaders\SimpleVel.fs" />
     <None Include="Shaders\SimpleVel.vs" />
     <None Include="Shaders\SimpleVel2.fs" />

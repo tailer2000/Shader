@@ -33,6 +33,7 @@ public:
 	void Solid7();
 	void Fillfloat(float n);
 	void DrawTextRect();//GLuint tex);
+	void DrawNumber(int * num);
 
 private:
 	void Initialize(int windowSizeX, int windowSizeY);
@@ -68,6 +69,8 @@ private:
 	GLuint m_SimpleVelShader2 = 0;
 	GLuint m_Texture = 0;
 	GLuint m_Texture2 = 0;
+	GLuint m_NumTexture = 0;
 	GLuint m_TextureRectShader = 0;
+	GLuint m_DrawNumShader = 0;
 };
 

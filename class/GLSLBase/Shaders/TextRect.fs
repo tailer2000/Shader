@@ -5,6 +5,7 @@ layout(location=0) out vec4 FragColor;
 uniform sampler2D u_TexSampler;
 uniform sampler2D u_TexSampler1;
 uniform sampler2D u_TexSampler2;
+uniform sampler2D u_TexSampler3;
 
 in vec2 v_Tex;
 
@@ -53,7 +54,6 @@ void main()
    //new_Tex.y += (2-floor(v_Tex.x*3.0))/3.0; // offset + 0~1/3
    //vec4 newColor = texture(u_TexSampler, new_Tex);
    //FragColor = newColor;
-
    //vec2 new_Tex;
    //new_Tex.x = v_Tex.x;
    //new_Tex.y = (2-floor(v_Tex.y*3.0))/3.0;
@@ -68,21 +68,21 @@ void main()
 
    // 왼쪽, 오른쪽 다른 텍스쳐
    // 1.0 - v_Tex.y : 텍스쳐가 반전될 때 해결.
-   vec2 new_Tex = vec2(v_Tex.x, fract(v_Tex.y));
-   vec4 newColor = texture(u_TexSampler, vec2(new_Tex.x*2, new_Tex.y*2));
-   vec4 newColor1 = texture(u_TexSampler1, vec2(fract(new_Tex.x*2), fract(new_Tex.y*2)));
-   vec4 newColor2 = texture(u_TexSampler2, vec2(new_Tex.x, fract(new_Tex.y*2)));
+   //vec2 new_Tex = vec2(v_Tex.x, fract(v_Tex.y));
+   //vec4 newColor = texture(u_TexSampler, vec2(new_Tex.x*2, new_Tex.y*2));
+   //vec4 newColor1 = texture(u_TexSampler1, vec2(fract(new_Tex.x*2), fract(new_Tex.y*2)));
+   //vec4 newColor2 = texture(u_TexSampler2, vec2(new_Tex.x, fract(new_Tex.y*2)));
+   //if(new_Tex.y > 0.5f)
+   //{
+   //  if(new_Tex.x > 0.5f)
+   //   {
+   //       FragColor = newColor;
+   //   }
+   //  else{
+   //    FragColor = newColor1;
+   //  }
+   //}
+   //else
+   //FragColor = newColor2;
 
-   if(new_Tex.y > 0.5f)
-   {
-     if(new_Tex.x > 0.5f)
-      {
-          FragColor = newColor;
-      }
-     else{
-       FragColor = newColor1;
-     }
-   }
-   else
-   FragColor = newColor2;
 }

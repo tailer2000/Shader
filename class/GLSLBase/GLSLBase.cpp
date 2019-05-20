@@ -32,7 +32,10 @@ void RenderScene(void)
 	//g_Renderer->Lecture4();
 	//g_Renderer->Lecture6();
 	//g_Renderer->Lecture7();
-	g_Renderer->DrawTextRect();
+	//g_Renderer->DrawTextRect();
+	static int gnum = 0;
+	g_Renderer->DrawNumber(&gnum);
+	//gnum++;
 
 	glutSwapBuffers();
 }
