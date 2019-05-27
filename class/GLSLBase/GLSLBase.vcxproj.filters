@@ -65,6 +65,18 @@
     <None Include="Shaders\DrawNumber.vs">
       <Filter>Shader</Filter>
     </None>
+    <None Include="Shaders\DrawSprite.fs">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="Shaders\DrawSprite.vs">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="Shaders\SandBox.fs">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="Shaders\SandBox.vs">
+      <Filter>Shader</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header">

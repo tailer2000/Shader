@@ -32,11 +32,15 @@ void Renderer::Initialize(int windowSizeX, int windowSizeY)
 	//m_SimpleVelShader = CompileShaders("./Shaders/SimpleVel.vs", "./Shaders/SimpleVel.fs");
 	//m_SimpleVelShader2 = CompileShaders("./Shaders/SimpleVel2.vs", "./Shaders/SimpleVel2.fs");
 	//m_TextureRectShader = CompileShaders("./Shaders/TextRect.vs", "./Shaders/TextRect.fs");
-	m_DrawNumShader = CompileShaders("./Shaders/DrawNumber.vs", "./Shaders/DrawNumber.fs");
+	//m_DrawNumShader = CompileShaders("./Shaders/DrawNumber.vs", "./Shaders/DrawNumber.fs");
+	//m_SpriteShader = CompileShaders("./Shaders/DrawSprite.vs", "./Shaders/DrawSprite.fs");
+	m_SandBoxShader = CompileShaders("./Shaders/SandBox.vs", "./Shaders/SandBox.fs");
 	
 	//m_Texture = CreatePngTexture("./Shaders/rgb.png");
 	//m_Texture2 = CreatePngTexture("./Shaders/Light.png");
-	m_NumTexture = CreatePngTexture("./Shaders/Numbers.png");
+	//m_NumTexture = CreatePngTexture("./Shaders/Numbers.png");
+	//m_Sprite = CreatePngTexture("./Shaders/monster1.png");
+	m_flag = CreatePngTexture("./Shaders/korea.png");
 	//Create VBOs
 	CreateVertexBufferObjects();
 }
@@ -92,6 +96,8 @@ void Renderer::CreateVertexBufferObjects()
 	//MakeRect(20000);
 
 	//Solid7();
+
+	CreateProxyGeometry();
 
 	float size = 0.5f;
 	float textrect[]
@@ -682,12 +688,14 @@ void Renderer::CreateProxyGeometry()
 			vertIndex++;
 			vertices[vertIndex] = 0.f;
 			vertIndex++;
+
 			vertices[vertIndex] = point[((y + 1)*pointCountX + (x + 1)) * 2 + 0];
 			vertIndex++;
 			vertices[vertIndex] = point[((y + 1)*pointCountX + (x + 1)) * 2 + 1];
 			vertIndex++;
 			vertices[vertIndex] = 0.f;
 			vertIndex++;
+
 			vertices[vertIndex] = point[((y + 1)*pointCountX + x) * 2 + 0];
 			vertIndex++;
 			vertices[vertIndex] = point[((y + 1)*pointCountX + x) * 2 + 1];
@@ -702,12 +710,14 @@ void Renderer::CreateProxyGeometry()
 			vertIndex++;
 			vertices[vertIndex] = 0.f;
 			vertIndex++;
+
 			vertices[vertIndex] = point[(y*pointCountX + (x + 1)) * 2 + 0];
 			vertIndex++;
 			vertices[vertIndex] = point[(y*pointCountX + (x + 1)) * 2 + 1];
 			vertIndex++;
 			vertices[vertIndex] = 0.f;
 			vertIndex++;
+
 			vertices[vertIndex] = point[((y + 1)*pointCountX + (x + 1)) * 2 + 0];
 			vertIndex++;
 			vertices[vertIndex] = point[((y + 1)*pointCountX + (x + 1)) * 2 + 1];
@@ -719,20 +729,36 @@ void Renderer::CreateProxyGeometry()
 
 	glGenBuffers(1, &m_VBO_GridMesh);
 	glBindBuffer(GL_ARRAY_BUFFER, m_VBO_GridMesh);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float)*(pointCountX - 1)*(pointCountY - 1) * 2 * 3 * 3, vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float)* GridCount*3, vertices, GL_STATIC_DRAW);
 }
 
 void Renderer::Lecture3()
 {
-	glUseProgram(m_SolidRectShader);
+	GLuint shader = m_SandBoxShader;
+	glUseProgram(shader);
 
-	glEnableVertexAttribArray(0);
+	GLfloat points[] = { 0.0, 0.0, -0.5, -0.5, -0.3, -0.3, 0.1, 0.1, 0.3, 0.3 };
+
+	GLuint uPoint = glGetUniformLocation(shader, "u_Points");
+	glUniform2fv(uPoint, 5, points);
+
+	GLuint uniformTex = glGetUniformLocation(shader, "u_Texture");
+	glUniform1i(uniformTex, 0);
+	glActiveTexture(GL_TEXTURE);
+	glBindTexture(GL_TEXTURE_2D, m_flag);
+
+	g_Time += 0.0005f;
+	GLuint uTime = glGetUniformLocation(shader, "u_Time");
+	glUniform1f(uTime, g_Time);
+
+	GLuint aPos = glGetAttribLocation(shader, "a_Position");
+
+	glEnableVertexAttribArray(aPos);
 	glBindBuffer(GL_ARRAY_BUFFER, m_VBO_GridMesh);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0);
+	glVertexAttribPointer(aPos, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0);
 
-	glDrawArrays(GL_TRIANGLES, 0, GridCount*3);
-
-	glDisableVertexAttribArray(0);
+	glDrawArrays(GL_LINE_STRIP, 0, GridCount);
+	glDisableVertexAttribArray(aPos);
 }
 
 void Renderer::Lecture4()
@@ -1049,7 +1075,7 @@ void Renderer::DrawNumber(int * num)
 	GLuint uNumber = glGetUniformLocation(shader, "u_Number");
 	glUniform1iv(uNumber, 3, num);
 
-	
+
 	// Vertex Settings
 	GLuint aPos = glGetAttribLocation(shader, "a_Position");
 	GLuint aTex = glGetAttribLocation(shader, "a_Tex");
@@ -1064,6 +1090,42 @@ void Renderer::DrawNumber(int * num)
 	glUniform1i(uniformTex, 0);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, m_NumTexture);
+
+	// Draw here
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+
+	// Restore to Default
+	glDisableVertexAttribArray(aPos);
+	glDisableVertexAttribArray(aTex);
+}
+
+void Renderer::DrawSprite(int num2)
+{
+	GLuint shader = m_SpriteShader;
+
+	glUseProgram(shader);
+
+	GLuint uSprite = glGetUniformLocation(shader, "u_Sprite");
+	glUniform1i(uSprite, num2);
+	GLuint uX = glGetUniformLocation(shader, "u_ResolX");
+	glUniform1i(uX, 4);
+	GLuint uY = glGetUniformLocation(shader, "u_ResolY");
+	glUniform1i(uY, 1);
+
+	// Vertex Settings
+	GLuint aPos = glGetAttribLocation(shader, "a_Position");
+	GLuint aTex = glGetAttribLocation(shader, "a_Tex");
+	glEnableVertexAttribArray(aPos);
+	glEnableVertexAttribArray(aTex);
+	glBindBuffer(GL_ARRAY_BUFFER, m_VBOTextRect);
+	glVertexAttribPointer(aPos, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 5, 0);
+	glVertexAttribPointer(aTex, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 5, (GLvoid*)(sizeof(float) * 3));
+
+	// Texture Settings
+	GLuint uniformTex = glGetUniformLocation(shader, "u_TexSampler");
+	glUniform1i(uniformTex, 0);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, m_Sprite);
 
 	// Draw here
 	glDrawArrays(GL_TRIANGLES, 0, 6);

@@ -34,6 +34,7 @@ public:
 	void Fillfloat(float n);
 	void DrawTextRect();//GLuint tex);
 	void DrawNumber(int * num);
+	void DrawSprite(int num);
 
 private:
 	void Initialize(int windowSizeX, int windowSizeY);
@@ -67,10 +68,16 @@ private:
 	GLuint m_SolidRectShader2 = 0;
 	GLuint m_SimpleVelShader = 0;
 	GLuint m_SimpleVelShader2 = 0;
+	GLuint m_SpriteShader = 0;
+
 	GLuint m_Texture = 0;
 	GLuint m_Texture2 = 0;
 	GLuint m_NumTexture = 0;
+	GLuint m_Sprite = 0;
+	GLuint m_flag = 0;
+
 	GLuint m_TextureRectShader = 0;
 	GLuint m_DrawNumShader = 0;
+	GLuint m_SandBoxShader = 0;
 };
 

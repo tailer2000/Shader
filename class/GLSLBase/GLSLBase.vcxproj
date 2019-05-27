@@ -172,6 +172,10 @@
   <ItemGroup>
     <None Include="Shaders\DrawNumber.fs" />
     <None Include="Shaders\DrawNumber.vs" />
+    <None Include="Shaders\DrawSprite.fs" />
+    <None Include="Shaders\DrawSprite.vs" />
+    <None Include="Shaders\SandBox.fs" />
+    <None Include="Shaders\SandBox.vs" />
     <None Include="Shaders\SimpleVel.fs" />
     <None Include="Shaders\SimpleVel.vs" />
     <None Include="Shaders\SimpleVel2.fs" />

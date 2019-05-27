@@ -28,14 +28,18 @@ void RenderScene(void)
 	
 	// Renderer Test
 	//g_Renderer->Test();
-	//g_Renderer->Lecture3();
+	g_Renderer->Lecture3();
 	//g_Renderer->Lecture4();
 	//g_Renderer->Lecture6();
 	//g_Renderer->Lecture7();
 	//g_Renderer->DrawTextRect();
-	static int gnum = 0;
-	g_Renderer->DrawNumber(&gnum);
+	//static int gnum = 0;
+	//g_Renderer->DrawNumber(&gnum);
 	//gnum++;
+	//static int num = 0;
+	//if (num > 4) num = 0;
+	//g_Renderer->DrawSprite(num);
+	//num++;
 
 	glutSwapBuffers();
 }
